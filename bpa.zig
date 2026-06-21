@@ -691,7 +691,7 @@ fn feed_forward_pass_seed(
     allocator: *Block,
     allocation_count: *u8,
     allocation_list: []?Block.u8aligned,
-) !u32 {
+) u32 {
     if (seed.* & 1 > 0 and allocation_count.* > 0) {
         allocation_count.* -= 1;
         allocator.free(allocation_list[allocation_count.*]);
@@ -703,7 +703,7 @@ fn feed_forward_pass_seed(
         const alloc_size = [_]u16{ 1, 127, 255, 511 };
         const alloc_index = (seed.* >> 1) & 0x3;
 
-        allocation_list[allocation_count.*] = try allocator.malloc(alloc_size[alloc_index]);
+        allocation_list[allocation_count.*] = allocator.malloc(alloc_size[alloc_index]) catch null;
         allocation_count.* += 1;
 
         seed.* >>= 3;
@@ -726,12 +726,8 @@ test "fuzz testing" {
         var seed_ = seed;
         var accm: u32 = 0;
 
-        if (seed == 327828) {
-            // @breakpoint();
-        }
-
         while (accm < 20) {
-            accm += try feed_forward_pass_seed(
+            accm += feed_forward_pass_seed(
                 @ptrCast(&seed_),
                 root,
                 &allocation_count,
