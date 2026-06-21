@@ -1,0 +1,16 @@
+Overlaid Binary Search Tree (BST) Binary Power Allocator (BPA)
+(BS name I came up with, basically Buddy Allocator that does not require external memory)
+
+Allocator for embedded or other memory constrained systems. Main feature is that all lists (free list and size list) are kept as BSTs inside the free blocks. So the only entry point is the memory itself, no additional memory is needed. 
+
+For usage you can refer to test cases or just look Allocator struct public functions.
+
+IMPORTANT
+1. No safety checks are available, (ex. freeing memory that does not belong to allocator does not raise any errors).
+2. Tracking allocated memory size is a burden of a caller, i.e. you must free the slice you have allocated, not just a pointer
+3. Probably contains bugs even though I wrote tests that cover basic use-cases and I used it in my small project which never left the debugging stage, so no promises - use at you own risk!
+
+PS ASCII pictures in the comments might be lying, I dont remember if I updated them during development.
+
+run tests 
+zig test bpa.zig 
